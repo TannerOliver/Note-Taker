@@ -11,7 +11,7 @@
 //         packages that could do this for you).
 
 // Install
-//     Express.js
+//  X    Express.js   
 
 // My job
 //     Create the back end
@@ -50,4 +50,36 @@
 //                 all notes from the db.json file, remove the note with the given id
 //                 property, and then rewrite the notes to the db.json file.
 ////////////////////////////////////////////////////////////////////////////////////////
+//  Require Express
+const express = require('express');
+//  Require FS
+const fs = require('fs');
+//  Require data from db.json
+let allNotes = ('./db/db.json');
+//  Create port
+const PORT = 3001;
 
+// Create var to use express
+const app = express();
+
+//  Tell Express to use public folder
+app.use(express.static('public'));
+
+//  Create a GET route that returns notes.html.
+app.get('/notes', (req, res) => {
+    res.sendFile('notes.html');
+});
+
+//  Create a GET route named * that returns index.html. 
+app.get('*', (req, res) => {
+    res.sendFile('index.html');
+});
+//  Create a GET route named /api/notes that reads db.json and returns all saved notes as JSON
+//      Let something === all notes from db.json
+
+//  Create a POST route named /api/notes that recieves new notes and adds it to the db.json
+//      return the new note to the client.
+//  Will need single source of truth for db.json data
+//  JSON.stringify response to append or push into single source of truth
+//  Then use fs to rewrite db.json file
+//  Reload or re-write html to empty input fields and have newly saved note onto side bar
