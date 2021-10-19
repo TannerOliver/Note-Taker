@@ -1,7 +1,7 @@
 //                          PSEUDO CODING
-// The following HTML routes should be created:
-//     GET /notes should return the notes.html file.
-//     GET * should return the index.html file.
+//  X The following HTML routes should be created:
+//  X     GET /notes should return the notes.html file.
+//  X     GET * should return the index.html file.
 
 // The following API routes should be created:
 //     GET /api/notes should read the db.json file and return all saved notes as JSON.
@@ -44,7 +44,6 @@
 //     You haven’t learned how to handle DELETE requests, but this application offers
 //         that functionality on the front end. As a bonus, try to add the DELETE route
 //         to the application using the following guideline:
-
 //             ~ DELETE /api/notes/:id should receive a query parameter that contains
 //                 the id of a note to delete. To delete a note, you'll need to read
 //                 all notes from the db.json file, remove the note with the given id
@@ -54,32 +53,52 @@
 const express = require('express');
 //  Require FS
 const fs = require('fs');
+//  Require path *does this come with node?*
+const path = require('path');
 //  Require data from db.json
-let allNotes = ('./db/db.json');
+let allNotes = require('./db/db.json');
 //  Create port
 const PORT = 3001;
 
 // Create var to use express
 const app = express();
 
-//  Tell Express to use public folder
+//  Tell Express to use public folder *not really sure if I need to use static express method*
 app.use(express.static('public'));
+//  In boiler forgot what this does
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //  Create a GET route that returns notes.html.
 app.get('/notes', (req, res) => {
-    res.sendFile('notes.html');
+    res.sendFile('notes.html'); //I think I need to add path.join after sendFile
 });
 
 //  Create a GET route named * that returns index.html. 
 app.get('*', (req, res) => {
-    res.sendFile('index.html');
+    res.sendFile('index.html'); //  Similar to above I think I need to add path.join after sendFile
 });
 //  Create a GET route named /api/notes that reads db.json and returns all saved notes as JSON
 //      Let something === all notes from db.json
-
+app.get('/api/notes', (req, res) => {
+    res.json(`${allNotes}`);
+});
 //  Create a POST route named /api/notes that recieves new notes and adds it to the db.json
 //      return the new note to the client.
-//  Will need single source of truth for db.json data
+//  Define var for res
+//  Will need single source of truth for db.json data       I think I did this with allNotes in global scope
 //  JSON.stringify response to append or push into single source of truth
 //  Then use fs to rewrite db.json file
 //  Reload or re-write html to empty input fields and have newly saved note onto side bar
+app.post('/api/notes', (req, res) => {
+    let resp = res;
+    allNotes = allNotes.push(resp);
+    JSON.stringify(allNotes);      //   Can I just stringify it when I am re-writing db.json
+    fs.writeFile('db.json', allNotes, (err) => {
+        err ? console.error(err) : console.log('File has been writen');
+    });
+});
+//  Create a LISTEN to tell which port we are listening on
+app.listen(PORT, () => {
+    console.log(`listening at http://localhost:${PORT}`);
+});
