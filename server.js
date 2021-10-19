@@ -50,12 +50,15 @@
 //                 property, and then rewrite the notes to the db.json file.
 ////////////////////////////////////////////////////////////////////////////////////////
 //  Require Express
+const { randomUUID } = require('crypto');
 const express = require('express');
 //  Require FS
 const fs = require('fs');
 //  Require path
 const path = require('path');
-//  Require data from db.json
+const { nextTick } = require('process');
+const { readAndAppend } = require('../../../inclass/11/28-Stu_Mini-Project/Develop/helpers/fsUtils');
+//  let allNotes - single source of truth for notes
 let allNotes = require('./db/db.json');
 //  Create port
 const PORT = process.env.PORT || 3001;
@@ -66,35 +69,24 @@ app.use(express.static('public'));
 //  In boiler forgot what this does
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//  Create a GET route that returns notes.html.
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'notes.html'));           // *I don't think I need to change this anymore*
+    res.sendFile(path.join(__dirname, 'public/notes.html'));           // *I don't think I need to change this anymore*
 });
-//  Create a GET route named /api/notes that reads db.json and returns all saved notes as JSON
-//      Let something === all notes from db.json
 app.get('/api/notes', (req, res) => {
-    res.json(path.join(__dirname, 'db.json')); // I did path.join here and I am not sure if I need it since im using res.json
+    res.json(allNotes)  // Since I used res.json it returns json and I assign it a var
 });
-//  X  Create a POST route named /api/notes that recieves new notes and adds it to the db.json
-//         return the new note to the client.
-//  X  Define var for res
-//  X  Will need single source of truth for db.json data       I think I did this with allNotes in global scope
-//  X  JSON.stringify response to append or push into single source of truth
-//  X  Then use fs to rewrite db.json file
-//  Reload or re-write html to empty input fields and have newly saved note onto side bar
 app.post('/api/notes', (req, res) => {
-    // var for res
-    let resp = res;
-    //  pushing resp into allNotes
-    allNotes = allNotes.push(resp);
-    //  Using FS to re-write db.json and putting stringified allNotes into it
-    fs.writeFile('db.json', JSON.stringify(allNotes), (err) => {
-        err ? console.error(err) : console.log('File has been writen');
-    });
+    //  if req.body exists readAndAppend it to .db/db.json otherwise error
+    if (req.body) {
+        readAndAppend(req.body, './db/db.json');
+        res.json(`Note added`)
+    } else {
+        res.error('Error in adding note');
+    }
 });
 //  Create a GET route named * that returns index.html. 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));       //  * I don't think I need to change this anymore.*
+    res.sendFile(path.join(__dirname, 'public/index.html'));       //  * I don't think I need to change this anymore.*
 });
 //  Create a LISTEN to tell which port we are listening on
 app.listen(PORT, () => {
