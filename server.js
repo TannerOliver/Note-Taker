@@ -12,7 +12,7 @@
 
 // Install
 //  X    Express.js   
-
+// remove this if you see it
 // My job
 //     Create the back end
 //     Connect the front end to the back
@@ -58,7 +58,7 @@ const path = require('path');
 //  Require data from db.json
 let allNotes = require('./db/db.json');
 //  Create port
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 // Create var to use express
 const app = express();
 //  Tell Express to use public folder *not really sure if I need to use static express method*
