@@ -53,50 +53,48 @@
 const express = require('express');
 //  Require FS
 const fs = require('fs');
-//  Require path *does this come with node?*
+//  Require path
 const path = require('path');
 //  Require data from db.json
 let allNotes = require('./db/db.json');
 //  Create port
 const PORT = 3001;
-
 // Create var to use express
 const app = express();
-
 //  Tell Express to use public folder *not really sure if I need to use static express method*
 app.use(express.static('public'));
 //  In boiler forgot what this does
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 //  Create a GET route that returns notes.html.
 app.get('/notes', (req, res) => {
-    res.sendFile('notes.html'); //I think I need to add path.join after sendFile
-});
-
-//  Create a GET route named * that returns index.html. 
-app.get('*', (req, res) => {
-    res.sendFile('index.html'); //  Similar to above I think I need to add path.join after sendFile
+    res.sendFile(path.join(__dirname, 'notes.html'));           // *I don't think I need to change this anymore*
 });
 //  Create a GET route named /api/notes that reads db.json and returns all saved notes as JSON
 //      Let something === all notes from db.json
 app.get('/api/notes', (req, res) => {
-    res.json(`${allNotes}`);
+    res.json(path.join(__dirname, 'db.json')); // I did path.join here and I am not sure if I need it since im using res.json
 });
-//  Create a POST route named /api/notes that recieves new notes and adds it to the db.json
-//      return the new note to the client.
-//  Define var for res
-//  Will need single source of truth for db.json data       I think I did this with allNotes in global scope
-//  JSON.stringify response to append or push into single source of truth
-//  Then use fs to rewrite db.json file
+//  X  Create a POST route named /api/notes that recieves new notes and adds it to the db.json
+//         return the new note to the client.
+//  X  Define var for res
+//  X  Will need single source of truth for db.json data       I think I did this with allNotes in global scope
+//  X  JSON.stringify response to append or push into single source of truth
+//  X  Then use fs to rewrite db.json file
 //  Reload or re-write html to empty input fields and have newly saved note onto side bar
 app.post('/api/notes', (req, res) => {
+    // var for res
     let resp = res;
+    //  pushing resp into allNotes
     allNotes = allNotes.push(resp);
-    JSON.stringify(allNotes);      //   Can I just stringify it when I am re-writing db.json
-    fs.writeFile('db.json', allNotes, (err) => {
+    //  Using FS to re-write db.json and putting stringified allNotes into it
+    fs.writeFile('db.json', JSON.stringify(allNotes), (err) => {
         err ? console.error(err) : console.log('File has been writen');
     });
+});
+//  Create a GET route named * that returns index.html. 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));       //  * I don't think I need to change this anymore.*
 });
 //  Create a LISTEN to tell which port we are listening on
 app.listen(PORT, () => {
