@@ -3,19 +3,17 @@
 //  X     GET /notes should return the notes.html file.
 //  X     GET * should return the index.html file.
 
-// The following API routes should be created:
-//     GET /api/notes should read the db.json file and return all saved notes as JSON.
-//     POST /api/notes should receive a new note to save on the request body, add it to
+//  X   The following API routes should be created:
+//      X   GET /api/notes should read the db.json file and return all saved notes as JSON.
+//      X   POST /api/notes should receive a new note to save on the request body, add it to
 //         the db.json file, and then return the new note to the client. You'll need to
 //         find a way togive each note a unique id when it's saved (look into npm
 //         packages that could do this for you).
-
-// Install
-//  X    Express.js   
-// remove this if you see it
-// My job
-//     Create the back end
-//     Connect the front end to the back
+//      X    Install
+//          X    Express.js   
+//  X   My job
+//      X   Create the back end
+//      X   Connect the front end to the back
 
 // Acceptance Criteria   
 //     GIVEN a note-taking application
@@ -50,33 +48,24 @@
 //                 property, and then rewrite the notes to the db.json file.
 ////////////////////////////////////////////////////////////////////////////////////////
 //  Require Express
-const { randomUUID } = require('crypto');
 const express = require('express');
-//  Require FS
-const fs = require('fs');
-//  Require path
 const path = require('path');
-const { nextTick } = require('process');
 const { readAndAppend } = require('../../../inclass/11/28-Stu_Mini-Project/Develop/helpers/fsUtils');
-//  let allNotes - single source of truth for notes
-let allNotes = require('./db/db.json');
-//  Create port
 const PORT = process.env.PORT || 3001;
-// Create var to use express
 const app = express();
-//  Tell Express to use public folder *not really sure if I need to use static express method*
+let allNotes = require('./db/db.json');
+
+//  Express Routes
 app.use(express.static('public'));
-//  In boiler forgot what this does
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/notes.html'));           // *I don't think I need to change this anymore*
+    res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
 app.get('/api/notes', (req, res) => {
-    res.json(allNotes)  // Since I used res.json it returns json and I assign it a var
+    res.json(allNotes)
 });
 app.post('/api/notes', (req, res) => {
-    //  if req.body exists readAndAppend it to .db/db.json otherwise error
     if (req.body) {
         readAndAppend(req.body, './db/db.json');
         res.json(`Note added`)
@@ -84,11 +73,9 @@ app.post('/api/notes', (req, res) => {
         res.error('Error in adding note');
     }
 });
-//  Create a GET route named * that returns index.html. 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));       //  * I don't think I need to change this anymore.*
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
-//  Create a LISTEN to tell which port we are listening on
 app.listen(PORT, () => {
     console.log(`listening at http://localhost:${PORT}`);
 });
