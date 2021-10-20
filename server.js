@@ -47,10 +47,10 @@
 //                 all notes from the db.json file, remove the note with the given id
 //                 property, and then rewrite the notes to the db.json file.
 ////////////////////////////////////////////////////////////////////////////////////////
-//  Require Express
+//  Variables
 const express = require('express');
 const path = require('path');
-const { readAndAppend } = require('../../../inclass/11/28-Stu_Mini-Project/Develop/helpers/fsUtils');
+const { readAndAppend } = require('./utils/fsUtils');
 const PORT = process.env.PORT || 3001;
 const app = express();
 let allNotes = require('./db/db.json');
