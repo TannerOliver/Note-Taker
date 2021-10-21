@@ -4,14 +4,12 @@
         "text": "Test text"
     },
     {},
-    {},
-    {},
     {
-        "title": "Tanners Note",
-        "text": "This is a test note\n"
+        "title": "1",
+        "text": "1"
     },
-    {
-        "title": "Tanner",
-        "text": "This is a new note for testing\n"
-    }
+    {},
+    {},
+    {},
+    {}
 ]
